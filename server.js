@@ -1,3 +1,4 @@
+require('./env');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -11,7 +12,7 @@ const port = 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// MongoDB setup (assuming MongoDB is being used)
+// MongoDB setup
 mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 
@@ -34,7 +35,7 @@ const QuizResponse = mongoose.model('QuizResponse', quizResponseSchema);
 
 // Nodemailer setup
 const transporter = nodemailer.createTransport({
-  service: 'gmail', // Use your email service provider
+  service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -42,6 +43,10 @@ const transporter = nodemailer.createTransport({
 });
 
 // Routes
+app.get('/api/save', (req, res) => {
+  res.send('Welcome to the Print Gigs API!');
+});
+
 app.post('/api/save', (req, res) => {
   const { email, os, issue, manufacturer, customerService, phone } = req.body;
 
@@ -61,7 +66,7 @@ app.post('/api/save', (req, res) => {
       // Send email
       const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: process.env.RECEIVER_EMAIL, // The email where you want to receive the data
+        to: process.env.RECEIVER_EMAIL, 
         subject: 'New Quiz Response',
         text: `
           Email: ${email}
